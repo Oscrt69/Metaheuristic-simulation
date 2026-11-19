@@ -1017,7 +1017,7 @@ body.learning #panel,body.learning #stats{display:none!important}
     <div class="seg" id="segAlgo">
       <button data-v="cso"><span style="color:var(--pink);margin-right:4px;">●</span>CSO</button><button data-v="coa"><span style="color:var(--cyan);margin-right:4px;">●</span>COA</button><button data-v="duel" class="on">Duel</button>
     </div>
-    <label>Fungsi uji (cari titik terendah)<select id="selFn"></select></label>
+    <label>Target makanan (cari daging ikan terbesar)<select id="selFn"></select></label>
     <label>Populasi <b id="vN">24</b><input type="range" id="rN" min="10" max="60" step="2" value="24"></label>
     <label>Kecepatan animasi <b id="vSpd">1.0×</b><input type="range" id="rSpd" min="0.25" max="4" step="0.25" value="1"></label>
     <label>Iterasi maksimum <b id="vT">100</b><input type="range" id="rT" min="30" max="300" step="10" value="100"></label>
@@ -1031,21 +1031,21 @@ body.learning #panel,body.learning #stats{display:none!important}
       <label><input type="checkbox" id="cTrail" checked>Jejak</label>
       <label><input type="checkbox" id="cGhost" checked>Kandidat seeking</label>
       <label><input type="checkbox" id="cWire">Wireframe</label>
-      <label><input type="checkbox" id="cOpt" checked>Tampilkan optimum</label>
+      <label><input type="checkbox" id="cOpt" checked>Tampilkan daging ikan</label>
       <label><input type="checkbox" id="cRot" checked>Putar kamera</label>
     </div>
     <div class="btns">
       <button id="btnRun" class="wide">▶ Mulai</button>
       <button id="btnStep">⏭ Langkah</button>
       <button id="btnReset">↺ Reset</button>
-      <button id="btnShift" class="wide">🎲 Acak posisi optimum</button>
+      <button id="btnShift" class="wide">🎲 Acak sebaran daging ikan</button>
     </div>
     <p class="hint">Pintasan: <kbd>Spasi</kbd> mulai/jeda. Seret untuk memutar kamera, scroll/pinch untuk zoom.</p>
   </div>
 
   <div id="gamePanel" hidden>
-    <h3>Berburu Harta Karun</h3>
-    <p class="hint" style="margin-top:0">Harta karun = <b>titik optimum global</b> (nilai fungsi terendah) yang tersembunyi dalam kabut. Temukan lebih dulu daripada tim CSO dan tim COA!</p>
+    <h3>Berburu Daging Ikan</h3>
+    <p class="hint" style="margin-top:0">Target utama = <b>Daging Ikan Besar</b> (optimum global) yang tersembunyi dalam kabut. Temukan lebih dulu daripada tim kucing (CSO) dan koati (COA)! Hati-hati terkecoh ikan kecil (optimum lokal).</p>
     <label>Medan<select id="gFn"></select></label>
     <label style="margin-bottom:4px">Kesulitan bot</label>
     <div class="seg" id="segDiff"><button data-v="easy">Santai</button><button data-v="normal" class="on">Normal</button><button data-v="hard">Susah</button></div>
@@ -1053,7 +1053,7 @@ body.learning #panel,body.learning #stats{display:none!important}
       <li><kbd>W A S D</kbd> / panah = navigasi gerak</li>
       <li><b>Klik / ketuk</b> medan = jalan ke titik target</li>
       <li><kbd>Spasi</kbd> = Sonar (buka area kabut)</li>
-      <li>Warna emas = lembah terdalam = dekat harta</li>
+      <li>Warna emas = aroma kuat = dekat ikan besar</li>
     </ul>
     <button id="btnStart" class="primary">Mulai Game</button>
     <div id="records"></div>
@@ -1065,7 +1065,7 @@ body.learning #panel,body.learning #stats{display:none!important}
   <canvas id="chart"></canvas>
   <div class="legend">Grafik: log₁₀ nilai terbaik per iterasi (turun = lebih baik)</div>
   <div class="grad"></div>
-  <div class="legend">Warna medan: emas = rendah (bagus) → ungu = tinggi (buruk)</div>
+  <div class="legend">Aroma: emas = aroma kuat (dekat ikan besar) → ungu = dingin/tanpa aroma</div>
 </aside>
 
 <div id="gTimer" class="glass" hidden>60</div>
@@ -1097,23 +1097,23 @@ body.learning #panel,body.learning #stats{display:none!important}
 <div id="help" hidden>
   <div class="card2 glass">
     <h2>Tentang Simulasi</h2>
-    <p>Semua agen bergerak di permukaan 3D sebuah fungsi uji. <b>Tujuannya: menemukan titik terendah</b> (nilai fungsi minimum). Tinggi permukaan = nilai fungsi.</p>
+    <p>Semua agen bergerak di atas <b>arena datar sempurna</b> untuk mencari <b>daging ikan terbesar</b> (optimum global) sambil menghindari jebakan daging ikan kecil (optimum lokal). Warna emas pada lantai menandakan radius aroma makanan yang kuat.</p>
     <h4>Cat Swarm Optimization (CSO)</h4>
     <ul>
       <li>Tiap kucing berada di salah satu mode: <b>seeking</b> (mengamati, tenang) atau <b>tracing</b> (mengejar, menyala merah muda). Rasio mengejar diatur lewat <b>MR</b>.</li>
-      <li><b>Seeking</b>: kucing membuat <b>SMP</b> salinan posisi, menggeser tiap salinan sedikit (<b>SRD</b>), lalu memilih satu kandidat secara roulette berdasarkan fitness. Titik-titik kandidat ditampilkan samar.</li>
-      <li><b>Tracing</b>: kecepatan kucing ditarik ke posisi kucing terbaik (seperti PSO). Sinar merah muda menandai posisi terbaik.</li>
+      <li><b>Seeking</b>: kucing membuat <b>SMP</b> salinan posisi, menggeser tiap salinan sedikit (<b>SRD</b>), lalu memilih satu kandidat secara roulette berdasarkan aroma daging ikan. Titik-titik kandidat ditampilkan samar.</li>
+      <li><b>Tracing</b>: kecepatan kucing ditarik ke posisi kucing dengan aroma ikan terbaik (seperti PSO). Sinar merah muda menandai posisi terbaik.</li>
     </ul>
     <h4>Coati Optimization Algorithm (COA)</h4>
     <ul>
-      <li><b>Fase 1 · berburu iguana (eksplorasi)</b>: iguana = solusi terbaik di atas pohon. Separuh koati memanjat mendekatinya (menyala hijau). Iguana lalu jatuh ke posisi acak, dan separuh lainnya mendekat atau menjauh darinya tergantung nilai fitness.</li>
-      <li><b>Fase 2 · menghindar predator (eksploitasi)</b>: koati melangkah acak di sekitar posisinya (menyala oranye dan sedikit membesar), langkahnya mengecil seiring iterasi.</li>
-      <li>Posisi baru hanya diterima jika lebih baik (greedy).</li>
+      <li><b>Fase 1 · berburu makanan (eksplorasi)</b>: koati mengincar posisi aroma terbaik di pohon (menyala hijau). Separuh koati mendekatinya, dan separuh lainnya berpencar mengejar aroma target acak.</li>
+      <li><b>Fase 2 · menghindar predator (eksploitasi)</b>: koati melangkah acak di sekitar posisinya (menyala oranye dan sedikit membesar) untuk mencari ikan terdekat, langkahnya mengecil seiring iterasi.</li>
+      <li>Posisi baru hanya diterima jika mendapatkan aroma ikan yang lebih baik (greedy).</li>
     </ul>
     <h4>Mode Duel</h4>
-    <p>Kedua populasi mulai dari posisi awal yang sama pada medan yang sama, jadi perbandingannya adil. Perhatikan jumlah <i>evals</i>: CSO butuh banyak evaluasi tiap iterasi.</p>
-    <h4>Game Berburu Harta</h4>
-    <p>Jelajahi medan yang berkabut sambil berlomba dengan dua tim bot. Gunakan warna dan nilai suhu untuk menebak arah, dan Sonar untuk melihat area luas. Pemenang adalah yang pertama mencapai area harta karun.</p>
+    <p>Kedua populasi mulai dari posisi awal yang sama pada arena yang sama, jadi perbandingannya adil. Perhatikan jumlah <i>evals</i>: CSO butuh banyak evaluasi tiap iterasi.</p>
+    <h4>Game Berburu Ikan</h4>
+    <p>Jelajahi arena berkabut sambil berlomba dengan dua tim bot. Gunakan warna dan nilai suhu aroma untuk menebak arah, dan Sonar untuk melihat area luas. Pemenang adalah yang pertama mencapai area daging ikan besar.</p>
     <div class="btns"><button id="helpClose" class="primary wide">Mengerti</button></div>
   </div>
 </div>
@@ -1125,14 +1125,38 @@ body.learning #panel,body.learning #stats{display:none!important}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 const TAU=Math.PI*2;
 const FUNCS={
-  sphere:{label:'Sphere · satu lembah',R:5,gamma:.8,opts:[[0,0]],f:(x,y)=>x*x+y*y},
-  rastrigin:{label:'Rastrigin · banyak lokal minimum',R:5.12,gamma:.9,opts:[[0,0]],f:(x,y)=>20+x*x+y*y-10*(Math.cos(TAU*x)+Math.cos(TAU*y))},
-  ackley:{label:'Ackley · lubang di dataran',R:5,gamma:.75,opts:[[0,0]],f:(x,y)=>-20*Math.exp(-.2*Math.sqrt(.5*(x*x+y*y)))-Math.exp(.5*(Math.cos(TAU*x)+Math.cos(TAU*y)))+Math.E+20},
-  himmelblau:{label:'Himmelblau · 4 optimum',R:5,gamma:.45,opts:[[3,2],[-2.805118,3.131312],[-3.77931,-3.283186],[3.584428,-1.848126]],f:(x,y)=>Math.pow(x*x+y-11,2)+Math.pow(x+y*y-7,2)},
-  rosenbrock:{label:'Rosenbrock · lembah pisang',R:3,gamma:.22,opts:[[1,1]],f:(x,y)=>Math.pow(1-x,2)+100*Math.pow(y-x*x,2)}
+  fish:{
+    label:'🐟 Daging Ikan · Sebaran Ikan Besar & Kecil',
+    R:5,
+    gamma:.8,
+    opts:[[-2.5, 2.0], [2.3, -2.2], [-1.8, -2.4], [2.2, 2.2]],
+    f:(x,y)=>{
+      const bigs = [[-2.5, 2.0], [2.3, -2.2], [-1.8, -2.4], [2.2, 2.2]];
+      const smalls = [
+        [0, 2.0], [0, -2.0], [-2.3, 0], [2.3, 0],
+        [-0.9, -0.7], [0.9, 0.8], [-3.3, 3.1], [3.3, -3.1],
+        [-1.0, 3.2], [1.1, -3.2]
+      ];
+      let val = 16 + 0.08 * (x*x + y*y);
+      for(const b of bigs){
+        const d2 = (x-b[0])*(x-b[0]) + (y-b[1])*(y-b[1]);
+        val -= 16 * Math.exp(-d2 / 2.0);
+      }
+      for(const s of smalls){
+        const d2 = (x-s[0])*(x-s[0]) + (y-s[1])*(y-s[1]);
+        val -= 8 * Math.exp(-d2 / 1.2);
+      }
+      return Math.max(0, val);
+    }
+  },
+  rastrigin:{label:'Rastrigin · banyak ikan kecil',R:5.12,gamma:.9,opts:[[0,0]],f:(x,y)=>20+x*x+y*y-10*(Math.cos(TAU*x)+Math.cos(TAU*y))},
+  himmelblau:{label:'Himmelblau · 4 ikan besar',R:4.8,gamma:.45,opts:[[3,2],[-2.805118,3.131312],[-3.77931,-3.283186],[3.584428,-1.848126]],f:(x,y)=>Math.pow(x*x+y-11,2)+Math.pow(x+y*y-7,2)},
+  ackley:{label:'Ackley · pulau aroma',R:5,gamma:.75,opts:[[0,0]],f:(x,y)=>-20*Math.exp(-.2*Math.sqrt(.5*(x*x+y*y)))-Math.exp(.5*(Math.cos(TAU*x)+Math.cos(TAU*y)))+Math.E+20},
+  sphere:{label:'Sphere · 1 ikan terpusat',R:5,gamma:.8,opts:[[0,0]],f:(x,y)=>x*x+y*y},
+  rosenbrock:{label:'Rosenbrock · celah memanjang',R:3,gamma:.22,opts:[[1,1]],f:(x,y)=>Math.pow(1-x,2)+100*Math.pow(y-x*x,2)}
 };
 class Problem{
-  constructor(key,rng){const d=FUNCS[key];this.key=key;this.label=d.label;this.R=d.R;this.gamma=d.gamma;this.baseF=d.f;this.baseOpts=d.opts;this.randomizeShift(rng);}
+  constructor(key,rng){const d=FUNCS[key]||FUNCS.fish;this.key=key;this.label=d.label;this.R=d.R;this.gamma=d.gamma;this.baseF=d.f;this.baseOpts=d.opts;this.randomizeShift(rng);}
   randomizeShift(rng){
     let m=0;for(const o of this.baseOpts)m=Math.max(m,Math.abs(o[0]),Math.abs(o[1]));
     const allow=Math.max(0,.85*this.R-m);
@@ -1141,6 +1165,24 @@ class Problem{
     let mx=0;const n=64,R=this.R;
     for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const v=this.f(-R+2*R*i/n,-R+2*R*j/n);if(v>mx)mx=v;}
     this.fmax=mx||1;
+
+    // Sebaran posisi daging ikan kecil di berbagai sudut (local optima)
+    this.smallFish = [];
+    const countSmall = 14;
+    const R_eff = this.R * 0.82;
+    for(let k=0; k<countSmall; k++){
+      const ang = (k / countSmall) * Math.PI * 2 + (rng()*0.4 - 0.2);
+      const rad = R_eff * (0.35 + (k % 3) * 0.25);
+      const sx = rad * Math.cos(ang) + this.sx * 0.4;
+      const sy = rad * Math.sin(ang) + this.sy * 0.4;
+      let tooClose = false;
+      for(const o of this.opts){
+        if(Math.hypot(sx - o[0], sy - o[1]) < this.R * 0.22){ tooClose = true; break; }
+      }
+      if(!tooClose){
+        this.smallFish.push([sx, sy]);
+      }
+    }
   }
   f(x,y){return this.baseF(x-this.sx,y-this.sy);}
   norm(x,y){const v=this.f(x,y)/this.fmax;return Math.pow(v<0?0:v>1?1:v,this.gamma);}
@@ -1285,9 +1327,9 @@ const newRng = () => A.mulberry32((Math.random()*4294967296)>>>0);
 const lin = c => Math.pow(c,2.2);
 
 /* ---------------- state ---------------- */
-const S = { mode:'sim', algo:'duel', fn:'rastrigin', N:24, speed:1, T:100, MR:.25, SMP:5, SRD:.2,
+const S = { mode:'sim', algo:'duel', fn:'fish', N:24, speed:1, T:100, MR:.25, SMP:5, SRD:.2,
             trails:true, ghost:true, wire:false, opt:true, rot:true, running:false };
-const G = { phase:'idle', t:0, limit:60, diff:'normal', key:'rastrigin', px:0, pz:0, tx:null, tz:null, prot:0,
+const G = { phase:'idle', t:0, limit:60, diff:'normal', key:'fish', px:0, pz:0, tx:null, tz:null, prot:0,
             bestF:Infinity, curF:0, curN:1, sonarCd:0, sonar:null, count:3, keys:{}, speed:3.6, winR:0.45 };
 const DIFF = { easy:{it:1.8}, normal:{it:1.0}, hard:{it:.55} };
 const GAME_N = 18;
@@ -1306,7 +1348,7 @@ controls.enableDamping = true; controls.dampingFactor = .08; controls.enablePan 
 controls.maxPolarAngle = Math.PI*.49; controls.minDistance = 4; controls.maxDistance = 36; controls.autoRotateSpeed = .8;
 function resetCamera(){
   const k = innerWidth/innerHeight < 1 ? 1.7 : 1;
-  controls.target.set(0,1,0); camera.position.set(11*k,9*k,12*k);
+  controls.target.set(0,0,0); camera.position.set(11*k,8.5*k,12*k);
 }
 resetCamera();
 
@@ -1352,8 +1394,8 @@ function initTerrain(){
   terrain.wire.position.y = .01; terrain.wire.frustumCulled = false; terrain.wire.visible = false; scene.add(terrain.wire);
 }
 function refreshVertex(i){
-  const r = terrain.reveal[i], y = terrain.heights[i]*r;
-  terrain.pos[3*i+1] = y; terrain.cur[i] = y;
+  const r = terrain.reveal[i];
+  terrain.pos[3*i+1] = 0; terrain.cur[i] = 0;
   const k = 3*i;
   for(let c=0;c<3;c++) terrain.col[k+c] = FOG[c] + (terrain.base[k+c]-FOG[c])*r;
 }
@@ -1368,11 +1410,13 @@ function buildTerrain(p, fog){
   for(let iz=0; iz<=SEG; iz++) for(let ix=0; ix<=SEG; ix++){
     const i = iz*S1+ix, X = -W+ix*STEP, Z = -W+iz*STEP;
     const n = p.norm(X/W*R, Z/W*R);
-    terrain.heights[i] = HMAX*n;
+    terrain.heights[i] = 0; // DATAR SEMPURNA: tanpa bukit & lembah
     palColor(n, tmp);
-    const cont = .9 + .1*Math.cos(n*45);
+    const cont = .92 + .08*Math.cos(n*35);
     for(let c=0;c<3;c++) terrain.base[3*i+c] = lin(clamp(tmp[c]*cont,0,1));
-    terrain.pos[3*i] = X; terrain.pos[3*i+2] = Z;
+    terrain.pos[3*i] = X;
+    terrain.pos[3*i+1] = 0; // Ketinggian datar sempurna di Y = 0
+    terrain.pos[3*i+2] = Z;
     terrain.reveal[i] = fog ? 0 : 1;
   }
   refreshAll();
@@ -1390,25 +1434,157 @@ function revealAround(X,Z,rad){
   if(ch){ terrain.geo.attributes.position.needsUpdate = true; terrain.geo.attributes.color.needsUpdate = true; terrain.normDirty = true; }
 }
 function surfaceY(X,Z){
-  let fx = clamp((X+W)/STEP, 0, SEG-1e-4), fz = clamp((Z+W)/STEP, 0, SEG-1e-4);
-  const ix = Math.floor(fx), iz = Math.floor(fz), tx = fx-ix, tz = fz-iz, c = terrain.cur;
-  const a = c[iz*S1+ix], b = c[iz*S1+ix+1], d = c[(iz+1)*S1+ix], e = c[(iz+1)*S1+ix+1];
-  return (a*(1-tx)+b*tx)*(1-tz) + (d*(1-tx)+e*tx)*tz;
+  return 0; // Datar sempurna tanpa lembah bukit
 }
 
-/* ---------------- optimum markers ---------------- */
+/* ---------------- 3D Daging Ikan (Fish Meat Models) ---------------- */
 const optGroup = new THREE.Group(); scene.add(optGroup);
-const goldMat = new THREE.MeshStandardMaterial({ color:0xffd166, emissive:0xffa800, emissiveIntensity:.9, roughness:.3, metalness:.6 });
-const beamGold = new THREE.MeshBasicMaterial({ color:0xffd166, transparent:true, opacity:.3, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide });
-const gemGeo = new THREE.OctahedronGeometry(.24), ringGeo = new THREE.TorusGeometry(.38,.035,8,40), beamGeo = new THREE.CylinderGeometry(.04,.04,5,8,1,true);
+
+function createFishMeat(isBig = false) {
+  const g = new THREE.Group();
+  const scale = isBig ? 1.05 : 0.52;
+
+  const meatMat = new THREE.MeshStandardMaterial({
+    color: isBig ? 0xff5232 : 0xf87171,
+    roughness: 0.35,
+    metalness: 0.1,
+    emissive: isBig ? 0xff3300 : 0xaa2211,
+    emissiveIntensity: isBig ? 0.35 : 0.15
+  });
+  const skinMat = new THREE.MeshStandardMaterial({
+    color: isBig ? 0x0f766e : 0x0284c7,
+    roughness: 0.6
+  });
+  const fatMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.8
+  });
+  const boneMat = new THREE.MeshStandardMaterial({
+    color: 0xfafafa,
+    roughness: 0.3
+  });
+
+  const meatGroup = new THREE.Group();
+  g.add(meatGroup);
+  g.userData.meat = meatGroup;
+
+  // Potongan daging ikan (steak fillet oval)
+  const bodyGeo = new THREE.CylinderGeometry(0.32, 0.34, 0.14, 20);
+  bodyGeo.scale(1.1, 1, 0.75);
+  const body = new THREE.Mesh(bodyGeo, meatMat);
+  body.position.y = 0.07;
+  meatGroup.add(body);
+
+  // Kulit tepi ikan
+  const skinGeo = new THREE.CylinderGeometry(0.33, 0.35, 0.13, 20, 1, true);
+  skinGeo.scale(1.1, 1, 0.75);
+  const skin = new THREE.Mesh(skinGeo, skinMat);
+  skin.position.y = 0.07;
+  meatGroup.add(skin);
+
+  // Serat lemak putih salmon
+  for(let i = -2; i <= 2; i++){
+    const stGeo = new THREE.BoxGeometry(0.46, 0.15, 0.02);
+    const st = new THREE.Mesh(stGeo, fatMat);
+    st.position.set(0, 0.07, i * 0.06);
+    st.rotation.y = i * 0.12;
+    meatGroup.add(st);
+  }
+
+  // Tulang tengah
+  const bone = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.16, 10), boneMat);
+  bone.position.set(0, 0.07, -0.04);
+  meatGroup.add(bone);
+
+  // Sirip / ekor hiasan
+  const finGeo = new THREE.ConeGeometry(0.12, 0.28, 4);
+  const fin = new THREE.Mesh(finGeo, skinMat);
+  fin.rotation.set(Math.PI/2, 0, Math.PI/2);
+  fin.position.set(-0.35, 0.07, 0);
+  meatGroup.add(fin);
+
+  if (isBig) {
+    // Ikan Besar: Lingkaran aroma berputar, pilar cahaya aroma, dan bintang emas
+    const auraGeo = new THREE.TorusGeometry(0.55, 0.03, 8, 36);
+    const auraMat = new THREE.MeshBasicMaterial({
+      color: 0xffb703,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending
+    });
+    const aura = new THREE.Mesh(auraGeo, auraMat);
+    aura.rotation.x = Math.PI / 2;
+    aura.position.y = 0.04;
+    g.add(aura);
+    g.userData.aura = aura;
+
+    const beamGeo = new THREE.CylinderGeometry(0.06, 0.18, 4.0, 12, 1, true);
+    const beamMat = new THREE.MeshBasicMaterial({
+      color: 0xffb703,
+      transparent: true,
+      opacity: 0.28,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.position.y = 2.0;
+    g.add(beam);
+
+    const starMat = new THREE.MeshStandardMaterial({
+      color: 0xffe066,
+      emissive: 0xff9900,
+      emissiveIntensity: 0.8,
+      roughness: 0.2
+    });
+    const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.18), starMat);
+    star.position.y = 0.5;
+    g.add(star);
+    g.userData.star = star;
+  } else {
+    // Ikan Kecil: Aroma tipis
+    const auraGeo = new THREE.RingGeometry(0.24, 0.32, 20);
+    const auraMat = new THREE.MeshBasicMaterial({
+      color: 0xff7b72,
+      transparent: true,
+      opacity: 0.35,
+      side: THREE.DoubleSide
+    });
+    const aura = new THREE.Mesh(auraGeo, auraMat);
+    aura.rotation.x = -Math.PI / 2;
+    aura.position.y = 0.02;
+    g.add(aura);
+  }
+
+  g.scale.setScalar(scale);
+  return g;
+}
+
 function buildOpt(){
   while(optGroup.children.length) optGroup.remove(optGroup.children[0]);
+  if (!prob) return;
+
+  // 1. Daging Ikan Besar (Pengganti Optimum Global)
   for(const o of prob.opts){
-    const g = new THREE.Group(), X = o[0]/prob.R*W, Z = o[1]/prob.R*W;
-    const ring = new THREE.Mesh(ringGeo, goldMat); ring.rotation.x = Math.PI/2; ring.position.y = .06;
-    const gem = new THREE.Mesh(gemGeo, goldMat); gem.position.y = .9;
-    const beam = new THREE.Mesh(beamGeo, beamGold); beam.position.y = 2.5;
-    g.add(ring, gem, beam); g.position.set(X, 0, Z); g.userData.gem = gem; optGroup.add(g);
+    const X = o[0]/prob.R*W, Z = o[1]/prob.R*W;
+    const fish = createFishMeat(true);
+    fish.position.set(X, 0, Z);
+    fish.userData.baseY = 0;
+    fish.userData.phase = Math.random() * Math.PI * 2;
+    optGroup.add(fish);
+  }
+
+  // 2. Daging Ikan Kecil (Sebaran Makanan Kecil / Minimum Lokal)
+  if(prob.smallFish){
+    for(const s of prob.smallFish){
+      const X = s[0]/prob.R*W, Z = s[1]/prob.R*W;
+      const fish = createFishMeat(false);
+      fish.position.set(X, 0, Z);
+      fish.userData.baseY = 0;
+      fish.userData.phase = Math.random() * Math.PI * 2;
+      optGroup.add(fish);
+    }
   }
 }
 
@@ -1788,10 +1964,10 @@ function renderHud(){
   const left = Math.max(0, G.limit-G.t);
   $('gTimer').textContent = Math.ceil(left); $('gTimer').classList.toggle('low', left<10);
   const cso = swarms.find(s => s.kind==='cso'), coa = swarms.find(s => s.kind==='coa');
-  $('gBoard').innerHTML = `<div style="color:var(--mut);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">Nilai terbaik (0 = harta)</div>
+  $('gBoard').innerHTML = `<div style="color:var(--mut);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">Aroma terbaik (0 = Ikan Besar)</div>
     <div class="r"><span>Kamu</span><b>${fmtF(G.bestF)}</b></div>
-    <div class="r" style="color:${COLS.cso}"><span>Tim CSO</span><b>${fmtF(cso.algo.best.f)}</b></div>
-    <div class="r" style="color:${COLS.coa}"><span>Tim COA</span><b>${fmtF(coa.algo.best.f)}</b></div>`;
+    <div class="r" style="color:${COLS.cso}"><span>Tim CSO (Kucing)</span><b>${fmtF(cso.algo.best.f)}</b></div>
+    <div class="r" style="color:${COLS.coa}"><span>Tim COA (Koati)</span><b>${fmtF(coa.algo.best.f)}</b></div>`;
   $('gTemp').textContent = tempLabel(G.curN); $('gF').textContent = fmtF(G.curF);
   $('gBar').style.width = (100*(1-Math.min(1,G.curN/.5))).toFixed(0)+'%';
   const b = $('btnSonar'); b.disabled = G.sonarCd>0; b.textContent = G.sonarCd>0 ? '📡 '+Math.ceil(G.sonarCd)+'s' : '📡 Sonar';
@@ -1804,20 +1980,20 @@ function endGame(winner){
     .map(r => `<div style="display:flex;justify-content:space-between"><span>${r[0]}</span><b>${fmtF(r[1])}</b></div>`).join('');
   let title, msg;
   if(winner==='player'){
-    title = 'Kamu menemukan target optimum!';
+    title = 'Kamu berhasil menemukan Ikan Besar!';
     msg = 'Waktu: <b>'+G.t.toFixed(1)+' dtk</b>';
     const rec = getRec(); if(!rec || G.t < +rec){ setRec(G.t); msg += ' · 🎉 rekor baru!'; }
   } else if(winner){
-    title = winner==='cso' ? 'Tim CSO menang' : 'Tim COA menang';
-    msg = 'Mereka menemukan harta pada detik <b>'+G.t.toFixed(1)+'</b>.';
+    title = winner==='cso' ? 'Tim CSO (Kucing) menang' : 'Tim COA (Koati) menang';
+    msg = 'Mereka menemukan ikan besar pada detik <b>'+G.t.toFixed(1)+'</b>.';
   } else {
     const best = Math.min(G.bestF, cso.algo.best.f, coa.algo.best.f);
     title = 'Waktu habis';
-    msg = 'Tidak ada yang tiba di target. Paling dekat: <b>'+(best===G.bestF?'Kamu':best===cso.algo.best.f?'Tim CSO':'Tim COA')+'</b>.';
+    msg = 'Tidak ada yang tiba di ikan besar. Paling dekat: <b>'+(best===G.bestF?'Kamu':best===cso.algo.best.f?'Tim CSO':'Tim COA')+'</b>.';
   }
   $('ovTitle').textContent = title;
   $('ovBody').innerHTML = `<p>${msg}</p><div style="margin:10px 0;text-align:left;padding:10px;border-radius:10px;background:rgba(255,255,255,.06)">
-    <div style="color:var(--mut);font-size:12px;margin-bottom:4px">Nilai terbaik masing-masing (makin kecil makin baik)</div>${rows}</div>`;
+    <div style="color:var(--mut);font-size:12px;margin-bottom:4px">Nilai terbaik masing-masing (0 = aroma puncak Ikan Besar)</div>${rows}</div>`;
   $('ovA').textContent = 'Main lagi'; $('ovB').textContent = 'Ke simulasi';
   $('ovA').onclick = startGame; $('ovB').onclick = () => setMode('sim');
   $('overlay').hidden = false; $('gBottom').hidden = true;
@@ -1888,7 +2064,21 @@ function frame(){
   }
   const fastF = S.mode==='sim' ? Math.max(1,S.speed) : 1;
   swarms.forEach(sw => sw.viz.update(dt,fastF));
-  optGroup.children.forEach(g => { const gm = g.userData.gem; gm.rotation.y = time*2; gm.position.y = .9+Math.sin(time*2)*.08; });
+  optGroup.children.forEach(g => {
+    const ph = g.userData.phase || 0;
+    if (g.userData.star) {
+      g.userData.star.rotation.y = time * 2.2;
+      g.userData.star.position.y = 0.48 + Math.sin(time * 3 + ph) * 0.08;
+    }
+    if (g.userData.aura) {
+      g.userData.aura.rotation.z = time * 1.4;
+      g.userData.aura.scale.setScalar(1 + Math.sin(time * 2.4 + ph) * 0.08);
+    }
+    if (g.userData.meat) {
+      g.userData.meat.position.y = 0.06 + Math.abs(Math.sin(time * 2 + ph)) * 0.04;
+      g.userData.meat.rotation.y = Math.sin(time * 1.2 + ph) * 0.25;
+    }
+  });
   if(terrain.normDirty && frameNo%6===0){ terrain.geo.computeVertexNormals(); terrain.normDirty = false; }
   controls.update(); renderer.render(scene,camera);
 }
@@ -1911,7 +2101,7 @@ const $=id=>document.getElementById(id),Q=(s,e=document)=>e.querySelector(s),QA=
 const L=$('learn'),ST=$('lstage'),M=()=>window.M3D;
 const fmtF=v=>!isFinite(v)?'—':v===0?'0':v<.001?v.toExponential(2):v.toFixed(v<1?4:3);
 const COLS={cso:'#ff5c9a',coa:'#4de1ff'},NM={cso:'🐱 CSO',coa:'🦝 COA'};
-const FNS=[['sphere','Sphere'],['rastrigin','Rastrigin'],['ackley','Ackley'],['himmelblau','Himmelblau'],['rosenbrock','Rosenbrock']];
+const FNS=[['fish','Daging Ikan'],['sphere','Sphere'],['rastrigin','Rastrigin'],['ackley','Ackley'],['himmelblau','Himmelblau'],['rosenbrock','Rosenbrock']];
 
 /* ---------- kendali simulasi (lewat elemen panel yang sudah ada) ---------- */
 const BASE={N:24,spd:1,T:100,MR:.25,SMP:5,SRD:.2,trail:1,ghost:1,wire:0,opt:1,rot:1};
@@ -1925,7 +2115,7 @@ function apply(o){
   const c=Object.assign({},BASE,o);
   for(const k in SLD)setR(SLD[k],c[k]);
   setC('cTrail',c.trail);setC('cGhost',c.ghost);setC('cWire',c.wire);setC('cOpt',c.opt);setC('cRot',c.rot);
-  setFn(c.fn||'rastrigin');setAlgo(c.algo||'duel');
+  setFn(c.fn||'fish');setAlgo(c.algo||'duel');
   $('btnReset').click();
   if(c.run&&!M().running())$('btnRun').click();
 }
